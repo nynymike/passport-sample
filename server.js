@@ -13,7 +13,7 @@ var flash    = require('connect-flash');
 var uristring =
 process.env.MONGOLAB_URI ||
 process.env.MONGOHQ_URL ||
-'mongodb://localhost/vast-refuge-14521';
+'mongodb://example:example@ds023455.mlab.com:23455/heroku_qvp5fq5w';
 
 // The http server will listen to an appropriate port, or default to
 // port 5000.
