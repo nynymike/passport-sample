@@ -129,49 +129,69 @@ module.exports = function(passport) {
         clientID        : configAuth.facebookAuth.clientID,
         clientSecret    : configAuth.facebookAuth.clientSecret,
         callbackURL     : configAuth.facebookAuth.callbackURL,
-        profileFields   : configAuth.facebookAuth.profileFields
-
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
     },
 
     // facebook will send back the token and profile
-    function(token, refreshToken, profile, done) {
+    function(req, token, refreshToken, profile, done) {
 
         // asynchronous
         process.nextTick(function() {
 
-            // find the user in the database based on their facebook id
-            User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
+            // check if the user is already logged in
+            if (!req.user) {
 
-                // if there is an error, stop everything and return that
-                // ie an error connecting to the database
-                if (err)
-                    return done(err);
+                // find the user in the database based on their facebook id
+                User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
 
-                // if the user is found, then log them in
-                if (user) {
-                    return done(null, user); // user found, return that user
-                } else {
-                    // if there is no user found with that facebook id, create them
-                    var newUser            = new User();
+                    // if there is an error, stop everything and return that
+                    // ie an error connecting to the database
+                    if (err)
+                        return done(err);
 
-                    // set all of the facebook information in our user model
-                    newUser.facebook.id    = profile.id; // set the users facebook id
-                    newUser.facebook.token = token; // we will save the token that facebook provides to the user
-                    newUser.facebook.name  = profile.name.givenName + ' ' + profile.name.familyName; // look at the passport user profile to see how names are returned
-                    newUser.facebook.email = profile.emails[0].value; // facebook can return multiple emails so we'll take the first
+                    // if the user is found, then log them in
+                    if (user) {
+                        return done(null, user); // user found, return that user
+                    } else {
+                        // if there is no user found with that facebook id, create them
+                        var newUser            = new User();
+                        // set all of the facebook information in our user model
+                        newUser.facebook.id    = profile.id; // set the users facebook id
+                        newUser.facebook.token = token; // we will save the token that facebook provides to the user
+                        newUser.facebook.name  = profile.displayName; // look at the passport user profile to see how names are returned
+                        // newUser.facebook.email = profile.emails[0].value; // facebook can return multiple emails so we'll take the first
 
-                    // save our user to the database
-                    newUser.save(function(err) {
-                        if (err)
-                            throw err;
+                        // save our user to the database
+                        newUser.save(function(err) {
+                            if (err)
+                                throw err;
 
-                        // if successful, return the new user
-                        return done(null, newUser);
-                    });
-                }
+                            // if successful, return the new user
+                            return done(null, newUser);
+                        });
+                    }
 
-            });
+                });
+
+            } else {
+                // user already exists and is logged in, we have to link accounts
+                var user            = req.user; // pull the user out of the session
+
+                // update the current users facebook credentials
+                user.facebook.id    = profile.id;
+                user.facebook.token = token;
+                user.facebook.name  = profile.displayName;
+                // user.facebook.email = profile.emails[0].value;
+
+                // save the user
+                user.save(function(err) {
+                    if (err)
+                        throw err;
+                    return done(null, user);
+                });
+            }
+
         });
 
     }));
@@ -186,104 +206,78 @@ module.exports = function(passport) {
         clientSecret    : configAuth.openidconnectAuth.clientSecret,
         callbackURL     : configAuth.openidconnectAuth.callbackURL,
         issuer          : configAuth.openidconnectAuth.issuer,
-        authorizationURL : configAuth.openidconnectAuth.authorizationURL,
-        tokenURL : configAuth.openidconnectAuth.tokenURL,
-        userInfoURL: configAuth.openidconnectAuth.userInfoURL
-
+        // authorizationURL : configAuth.openidconnectAuth.authorizationURL,
+        // tokenURL : configAuth.openidconnectAuth.tokenURL,
+        // userInfoURL: configAuth.openidconnectAuth.userInfoURL,
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
     },
 
-    // facebook will send back the token and profile
-    function(token, refreshToken, profile, done) {
 
-        // asynchronous
-        process.nextTick(function() {
+    function(req, iss, sub, profile, jwtClaims, accessToken, refreshToken, params, done) {
 
-            // find the user in the database based on their facebook id
-            User.findOne({ 'openidconnect.id' : profile.id }, function(err, user) {
+      // asynchronous
+      process.nextTick(function() {
 
-                // if there is an error, stop everything and return that
-                // ie an error connecting to the database
-                if (err)
-                    return done(err);
+          // check if the user is already logged in
+          if (!req.user) {
 
-                // if the user is found, then log them in
-                if (user) {
-                    return done(null, user); // user found, return that user
-                } else {
-                    // if there is no user found with that openidconnect id, create them
-                    var newUser            = new User();
+              // find the user in the database based on their openidconnect id
+              User.findOne({ 'openidconnect.id' : profile.id }, function(err, user) {
 
-                    // set all of the openidconnect information in our user model
-                    newUser.openidconnect.id    = profile.id; // set the users openidconnect id
-                    newUser.openidconnect.token = token; // we will save the token that openidconnect provides to the user
+                  // if there is an error, stop everything and return that
+                  // ie an error connecting to the database
+                  if (err)
+                      return done(err);
 
-                    // save our user to the database
-                    newUser.save(function(err) {
-                        if (err)
-                            throw err;
+                  // if the user is found, then log them in
+                  if (user) {
+                      return done(null, user); // user found, return that user
+                  } else {
+                      // if there is no user found with that openidconnect id, create them
+                      var newUser            = new User();
 
-                        // if successful, return the new user
-                        return done(null, newUser);
-                    });
-                }
+                      // set all of the openidconnect information in our user model
+                      newUser.openidconnect.id    = profile.id; // set the users openidconnect id
+                      newUser.openidconnect.issuer = iss;
+                      // newUser.openidconnect.email = ;
+                      newUser.openidconnect.displayName = profile.displayName;
+                      newUser.openidconnect.accessToken = params.access_token;
+                      newUser.openidconnect.idToken = params.id_token;
 
+                      // save our user to the database
+                      newUser.save(function(err) {
+                          if (err)
+                              throw err;
+
+                          // if successful, return the new user
+                          return done(null, newUser);
+                      });
+                  }
+
+              });
+
+          } else {
+              // user already exists and is logged in, we have to link accounts
+              var user            = req.user; // pull the user out of the session
+
+              // update the current users openidconnect credentials
+              user.openidconnect.id    = profile.id; // set the users openidconnect id
+              user.openidconnect.issuer = iss;
+              // user.openidconnect.email = ;
+              user.openidconnect.displayName = profile.displayName;
+              user.openidconnect.accessToken = params.access_token;
+              user.openidconnect.idToken = params.id_token;
+
+              // save the user
+              user.save(function(err) {
+                  if (err)
+                      throw err;
+                  return done(null, user);
             });
-        });
+        }
 
-    }));
+    });
 
-    // =========================================================================
-    // OPENID============================================================
-    // =========================================================================
-    passport.use(new OpenIdStrategy({
-    returnURL: configAuth.openidAuth.returnURL,
-    realm: configAuth.openidAuth.realm,
-    providerURL: configAuth.openidAuth.providerURL
-    // authorizationURL: configAuth.openidAuth.authorizationURL,
-    // tokenURL: configAuth.openidAuth.tokenURL,
-    // stateless: true
-    },
-
-
-    // facebook will send back the token and profile
-    function(token, refreshToken, profile, done) {
-
-        // asynchronous
-        process.nextTick(function() {
-
-            // find the user in the database based on their facebook id
-            User.findOne({ 'openid.id' : profile.id }, function(err, user) {
-
-                // if there is an error, stop everything and return that
-                // ie an error connecting to the database
-                if (err)
-                    return done(err);
-
-                // if the user is found, then log them in
-                if (user) {
-                    return done(null, user); // user found, return that user
-                } else {
-                    // if there is no user found with that openid id, create them
-                    var newUser            = new User();
-
-                    // set all of the openid information in our user model
-                    newUser.openid.id    = profile.id; // set the users openid id
-                    newUser.openid.token = token; // we will save the token that openid provides to the user
-
-                    // save our user to the database
-                    newUser.save(function(err) {
-                        if (err)
-                            throw err;
-
-                        // if successful, return the new user
-                        return done(null, newUser);
-                    });
-                }
-
-            });
-        });
-
-    }));
-
-};
+}));
+}

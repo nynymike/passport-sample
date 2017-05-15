@@ -1,103 +1,163 @@
-// app/routes.js
 module.exports = function(app, passport) {
 
-    // =====================================
-    // HOME PAGE (with login links) ========
-    // =====================================
-    app.get('/', function(req, res) {
-        res.render('index.ejs'); // load the index.ejs file
-    });
+// normal routes ===============================================================
 
-    // =====================================
-    // LOGIN ===============================
-    // =====================================
-    // show the login form
-    app.get('/login', function(req, res) {
-            res.render('login.ejs', { message: req.flash('loginMessage') });
-        });
+	// show the home page (will also have our login links)
+	app.get('/', function(req, res) {
+		res.render('index.ejs');
+	});
 
-    // process the login form
-    app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
-    }));
+	// PROFILE SECTION =========================
+	app.get('/profile', isLoggedIn, function(req, res) {
+		res.render('profile.ejs', {
+			user : req.user
+		});
+	});
 
-    // =====================================
-    // SIGNUP =================================
-    // show the signup form
-    app.get('/signup', function(req, res) {
-        res.render('signup.ejs', { message: req.flash('signupMessage') });
-    });
+	// LOGOUT ==============================
+	app.get('/logout', function(req, res) {
+		req.logout();
+		res.redirect('/');
+	});
 
-    // process the signup form
-    app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/signup', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
-    }));
+// =============================================================================
+// AUTHENTICATE (FIRST LOGIN) ==================================================
+// =============================================================================
 
-    app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
-        });
-    });
+	// locally --------------------------------
+		// LOGIN ===============================
+		// show the login form
+		app.get('/login', function(req, res) {
+			res.render('login.ejs', { message: req.flash('loginMessage') });
+		});
 
-    // =====================================
-    // FACEBOOK ROUTES =====================
-    // =====================================
-    // route for facebook authentication and login
-    app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+		// process the login form
+		app.post('/login', passport.authenticate('local-login', {
+			successRedirect : '/profile', // redirect to the secure profile section
+			failureRedirect : '/login', // redirect back to the signup page if there is an error
+			failureFlash : true // allow flash messages
+		}));
 
-    // handle the callback after facebook has authenticated the user
-    app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', {
-            successRedirect : '/profile',
-            failureRedirect : '/'
-    }));
+		// SIGNUP =================================
+		// show the signup form
+		app.get('/signup', function(req, res) {
+			res.render('signup.ejs', { message: req.flash('loginMessage') });
+		});
 
-    // =====================================
-    // OPENIDCONNECT ROUTES =====================
-    // =====================================
-    // route for openidconnect authentication and login
-    app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' }));
+		// process the signup form
+		app.post('/signup', passport.authenticate('local-signup', {
+			successRedirect : '/profile', // redirect to the secure profile section
+			failureRedirect : '/signup', // redirect back to the signup page if there is an error
+			failureFlash : true // allow flash messages
+		}));
 
-    // handle the callback after openidconnect has authenticated the user
-    app.get('/auth/openidconnect/callback',
-        passport.authenticate('openidconnect', {
-            successRedirect : '/profile',
-            failureRedirect : '/'
-    }));
+	// facebook -------------------------------
 
-    // =====================================
-    // OPENID ROUTES =====================
-    // =====================================
-    // route for openid authentication and login
-    app.get('/auth/openid', passport.authenticate('openid', { scope : 'email' }));
+		// send to facebook to do the authentication
+		app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
 
-    // handle the callback after openid has authenticated the user
-    app.get('/auth/openid/callback',
-        passport.authenticate('openid', {
-            successRedirect : '/profile',
-            failureRedirect : '/'
-    }));
+		// handle the callback after facebook has authenticated the user
+		app.get('/auth/facebook/callback',
+			passport.authenticate('facebook', {
+				successRedirect : '/profile',
+				failureRedirect : '/'
+			}));
 
-    // =====================================
-    // LOGOUT ==============================
-    // =====================================
-    app.get('/logout', function(req, res) {
-        req.logout();
-        res.redirect('/');
-    });
+	// openidconnect --------------------------------
+
+		// send to openidconnect to do the authentication
+		app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' }));
+
+		// handle the callback after openidconnect has authenticated the user
+		app.get('/auth/openidconnect/callback',
+			passport.authenticate('openidconnect', {
+				successRedirect : '/profile',
+				failureRedirect : '/'
+			}));
+
+
+
+// =============================================================================
+// AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
+// =============================================================================
+
+	// locally --------------------------------
+		app.get('/connect/local', function(req, res) {
+			res.render('connect-local.ejs', { message: req.flash('loginMessage') });
+		});
+		app.post('/connect/local', passport.authenticate('local-signup', {
+			successRedirect : '/profile', // redirect to the secure profile section
+			failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
+			failureFlash : true // allow flash messages
+		}));
+
+	// facebook -------------------------------
+
+		// send to facebook to do the authentication
+		app.get('/connect/facebook', passport.authorize('facebook', { scope : 'email' }));
+
+		// handle the callback after facebook has authorized the user
+		app.get('/connect/facebook/callback',
+			passport.authorize('facebook', {
+				successRedirect : '/profile',
+				failureRedirect : '/'
+			}));
+
+	// openidconnect --------------------------------
+
+		// send to openidconnect to do the authentication
+		app.get('/connect/openidconnect', passport.authorize('openidconnect', { scope : 'email' }));
+
+		// handle the callback after openidconnect has authorized the user
+		app.get('/connect/openidconnect/callback',
+			passport.authorize('openidconnect', {
+				successRedirect : '/profile',
+				failureRedirect : '/'
+			}));
+
+
+// =============================================================================
+// UNLINK ACCOUNTS =============================================================
+// =============================================================================
+// used to unlink accounts. for social accounts, just remove the token
+// for local account, remove email and password
+// user account will stay active in case they want to reconnect in the future
+
+	// local -----------------------------------
+	app.get('/unlink/local', function(req, res) {
+		var user            = req.user;
+		user.local.email    = undefined;
+		user.local.password = undefined;
+		user.save(function(err) {
+			res.redirect('/profile');
+		});
+	});
+
+	// facebook -------------------------------
+	app.get('/unlink/facebook', function(req, res) {
+		var user            = req.user;
+		user.facebook.token = undefined;
+		user.save(function(err) {
+			res.redirect('/profile');
+		});
+	});
+
+	// openidconnect --------------------------------
+	app.get('/unlink/openidconnect', function(req, res) {
+		var user           = req.user;
+		user.openidconnect.idToken = undefined;
+		user.save(function(err) {
+			res.redirect('/profile');
+		});
+	});
+
+
 };
 
-// route middleware to make sure a user is logged in
+// route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
+	if (req.isAuthenticated())
+		return next();
 
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
-        return next();
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
+	res.redirect('/');
 }

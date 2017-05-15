@@ -4,16 +4,12 @@
 // get all the tools we need
 var express  = require('express');
 var app      = express();
-var port     = process.env.PORT || 8080;
+var port     = process.env.PORT || 8090;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var session  = require('express-session');
 var flash    = require('connect-flash');
 
-var uristring =
-process.env.MONGOLAB_URI ||
-process.env.MONGOHQ_URL ||
-'mongodb://example:example@ds023455.mlab.com:23455/heroku_qvp5fq5w';
 
 // The http server will listen to an appropriate port, or default to
 // port 5000.
@@ -28,16 +24,16 @@ var bodyParser   = require('body-parser');
 var configDB = require('./config/database.js');
 
 // configuration ===============================================================
-// mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(configDB.url); // connect to our database
 // Makes connection asynchronously.  Mongoose will queue up database
 // operations and release them when the connection is complete.
-mongoose.connect(uristring, function (err, res) {
-  if (err) {
-  console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-  } else {
-  console.log ('Succeeded connected to: ' + uristring);
-  }
-});
+// mongoose.connect(uristring, function (err, res) {
+//   if (err) {
+//   console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+//   } else {
+//   console.log ('Succeeded connected to: ' + uristring);
+//   }
+// });
 
 require('./config/passport')(passport); // pass passport for configuration
 

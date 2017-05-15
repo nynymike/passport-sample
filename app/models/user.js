@@ -16,18 +16,14 @@ var userSchema = mongoose.Schema({
         email        : String,
         name         : String
     },
-    twitter          : {
+    openidconnect         : {
         id           : String,
-        token        : String,
-        displayName  : String,
-        username     : String
-    },
-    google           : {
-        id           : String,
-        token        : String,
+        issuer       : String,
         email        : String,
-        name         : String
-    }
+        displayName  : String,
+        accessToken  : String,
+        idToken      : String
+    },
 
 });
 
