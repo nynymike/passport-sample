@@ -206,17 +206,18 @@ module.exports = function(passport) {
         clientSecret    : configAuth.openidconnectAuth.clientSecret,
         callbackURL     : configAuth.openidconnectAuth.callbackURL,
         issuer          : configAuth.openidconnectAuth.issuer,
-        // authorizationURL : configAuth.openidconnectAuth.authorizationURL,
-        // tokenURL : configAuth.openidconnectAuth.tokenURL,
-        // userInfoURL: configAuth.openidconnectAuth.userInfoURL,
+        authorizationURL : configAuth.openidconnectAuth.authorizationURL,
+        tokenURL : configAuth.openidconnectAuth.tokenURL,
+        userInfoURL: configAuth.openidconnectAuth.userInfoURL,
         passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
-    },
+    } ,
 
 
     function(req, iss, sub, profile, jwtClaims, accessToken, refreshToken, params, done) {
-
+      // console.log(req);
       // asynchronous
+      // console.log(profile);
       process.nextTick(function() {
 
           // check if the user is already logged in

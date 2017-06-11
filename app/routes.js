@@ -1,10 +1,49 @@
-module.exports = function(app, passport) {
-
+module.exports = function(app, passport, proxyApp) {
+var authParams = require('../config/auth');
 // normal routes ===============================================================
 
 	// show the home page (will also have our login links)
 	app.get('/', function(req, res) {
 		res.render('index.ejs');
+		// if (req.method == 'POST') {
+	  //   var body = '';
+	  //   req.on('data', function (data) {
+	  //       body += data;
+	  //   });
+		// 	console.log(body);
+	  //   req.on('end', function () {
+	  //       // authParams.openidconnectAuth.issuer = body;
+	  //       console.log(authParams.openidconnectAuth);
+	  //       // passport.authenticate('openidconnect', { scope : 'email' })
+	  //   });
+	  // }
+	  // if (req.method == 'GET') {
+	  //   var body = '';
+	  //   req.on('data', function (data) {
+	  //       body += data;
+	  //   });
+	  //   req.on('end', function () {
+	  //       authParams.openidconnectAuth.issuer = body;
+	  //       console.log(authParams.openidconnectAuth);
+	  //       passport.authenticate('openidconnect', { scope : 'email' })
+	  //   });
+	  // }
+		// // Website you wish to allow to connect
+		// res.setHeader('Access-Control-Allow-Origin', '*');
+		//
+		// // Request methods you wish to allow
+		// res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+		//
+		// // Request headers you wish to allow
+		// res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+		//
+		// // Set to true if you need the website to include cookies in the requests sent
+		// // to the API (e.g. in case you use sessions)
+		// res.setHeader('Access-Control-Allow-Credentials', true);
+	  // res.setHeader('Location', 'http://192.168.0.126:8090/auth/openidconnect');
+	  // res.statusCode = 301;
+	  // // res.statusCode = 200;
+	  // res.end();
 	});
 
 	// PROFILE SECTION =========================
@@ -64,9 +103,17 @@ module.exports = function(app, passport) {
 			}));
 
 	// openidconnect --------------------------------
+		app.use(function (req, res, done) {
+			if (req.query.issuer) {
+					console.log(req.query.issuer);
+					done();
+			} else {
+					done();
+			}
+		});
 
 		// send to openidconnect to do the authentication
-		app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' }));
+		app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'}));
 
 		// handle the callback after openidconnect has authenticated the user
 		app.get('/auth/openidconnect/callback',

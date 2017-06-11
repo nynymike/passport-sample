@@ -9,8 +9,16 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var session  = require('express-session');
 var flash    = require('connect-flash');
+var authParams = require('./config/auth');
 
+var fs = require('fs');
+var https = require('https');
+var app = require('express')();
 
+var options = {
+   key  : fs.readFileSync('server.key'),
+   cert : fs.readFileSync('server.crt')
+};
 // The http server will listen to an appropriate port, or default to
 // port 5000.
 var theport = process.env.PORT || 5000;
@@ -35,6 +43,44 @@ mongoose.connect(configDB.url); // connect to our database
 //   }
 // });
 
+// var http = require('http');
+//
+// server = http.createServer(function (req, res) {
+//   if (req.method == 'POST') {
+//         var body = '';
+//         req.on('data', function (data) {
+//             body += data;
+//         });
+//         req.on('end', function () {
+//             authParams.openidconnectAuth.issuer = body;
+//             console.log(authParams.openidconnectAuth);
+//             passport.authenticate('openidconnect', { scope : 'email' })
+//         });
+//
+//   }
+//   if (req.method == 'GET') {
+//         var body = '';
+//         req.on('data', function (data) {
+//             body += data;
+//         });
+//         req.on('end', function () {
+//             authParams.openidconnectAuth.issuer = body;
+//             console.log(authParams.openidconnectAuth);
+//             passport.authenticate('openidconnect', { scope : 'email' })
+//         });
+//     }
+//     res.setHeader("Access-Control-Allow-Origin", "*");
+//     // res.setHeader('Location', 'http://localhost:8090/auth/openidconnect');
+//     // res.statusCode = 301;
+//     res.statusCode = 200;
+//     res.end('http://localhost:8090/auth/openidconnect');
+// });
+//
+//
+// host = 'localhost';
+// server.listen(8200, host);
+
+
 require('./config/passport')(passport); // pass passport for configuration
 
 // set up our express application
@@ -53,5 +99,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
+// https.createServer(options, app).listen(port, function () {
+//   console.log('The magic happens on port ' + port);
+// });
 app.listen(port);
-console.log('The magic happens on port ' + port);
