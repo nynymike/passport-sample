@@ -10,11 +10,11 @@ module.exports = {
     'openidconnectAuth' : {
         'clientID'      : 'Passport-Test2', // your App ID
         'clientSecret'  : '3aa6c917-6bcc-4f91-bffb-c4ebbc8df5eb', // your App Secret
-        'callbackURL'   : 'http://localhost:8090/auth/openidconnect/callback',
-        'issuer'          : 'http://localhost:8080/auth/realms/master',
-        'authorizationURL' : 'http://localhost:8080/auth/realms/master/protocol/openid-connect/auth',
-        'tokenURL' : 'http://localhost:8080/auth/realms/master/protocol/openid-connect/token',
-        'userInfoURL' : 'http://localhost:8080/auth/realms/master/protocol/openid-connect/userinfo'
+        'callbackURL'   : 'http://192.168.0.126:8090/auth/openidconnect/callback',
+        'issuer'          : 'http://192.168.0.126:8080/auth/realms/master',
+        'authorizationURL' : 'http://192.168.0.126:8080/auth/realms/master/protocol/openid-connect/auth',
+        'tokenURL' : 'http://192.168.0.126:8080/auth/realms/master/protocol/openid-connect/token',
+        'userInfoURL' : 'http://192.168.0.126:8080/auth/realms/master/protocol/openid-connect/userinfo'
         // 'clientID'      : '@!EDC1.2B96.1235.CBC7!0001!099F.E817!0008!7486.21E5.9387.05C3', // your App ID
         // 'clientSecret'  : 'segredo', // your App Secret
         // 'callbackURL'   : 'https://mydomain.com:8090/auth/openidconnect/callback',
