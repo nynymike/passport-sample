@@ -1,4 +1,4 @@
-module.exports = function(app, passport, proxyApp) {
+module.exports = function(app, passport, request) {
 var authParams = require('../config/auth');
 // normal routes ===============================================================
 
@@ -9,17 +9,12 @@ var authParams = require('../config/auth');
 
 	app.post('/proxy', function(req, res) {
 		authParams.openidconnectAuth.issuer = req.body.issuer;
-		res.statusCode = 200;
-		passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'});
-		res.send("test")
-	// 	// res.setHeader('Origin', req.headers.origin);
-		// res.redirect('/auth/openidconnect');
-	// app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'}));
-	// 	// console.log(res);
-	// 	// res.end();
-	// 	// res.setHeader('Location', 'http://192.168.0.126:8090/auth/openidconnect');
-	//   // res.statusCode = 301;
-	//   // res.end();
+
+		request.get('http://192.168.0.126:8090/auth/openidconnect', function (error, response, body) {
+			res.writeHead(response.statusCode, response.headers);
+			res.write(body);
+			res.end();
+		});
 	});
 
 	// PROFILE SECTION =========================

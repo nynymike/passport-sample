@@ -10,6 +10,7 @@ var passport = require('passport');
 var session  = require('express-session');
 var flash    = require('connect-flash');
 var bodyParser = require('body-parser');
+var request = require('request');
 var authParams = require('./config/auth');
 
 var fs = require('fs');
@@ -119,7 +120,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport,request); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 // https.createServer(options, app).listen(port, function () {

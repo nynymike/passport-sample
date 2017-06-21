@@ -18,6 +18,7 @@
     "fs" : "latest",
     "http" : "latest",
     "https" : "latest",
+    "request" : "latest",
     "morgan": "~1.0.0",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.0",
