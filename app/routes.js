@@ -52,28 +52,32 @@ var ipAddress = require('../config/ip');
 		// handle the callback after openidconnect has authenticated the user
 		app.get('/auth/openidconnect/callback',
 			passport.authenticate('openidconnect', {
-				successRedirect : '/profile',
+				// successRedirect : '/profile',
 				failureRedirect : '/proxy'
-			}));
-			// }), callbackResponse);
+			// }));
+		}), callbackResponse);
 
+		function callbackResponse(req, res) {
+			if (!req.user) {
+				return res.redirect('/proxy');
+			}
+			console.log(req.user.openidconnect);
+			console.log('User authenticated with: ' + req.user.openidconnect.issuer + ' Strategy with userid: ' + req.user.openidconnect.id);
+			var queryUserString = encodeURIComponent(JSON.stringify(req.user.openidconnect));
+			//dynamically discover issuer's endpoint
+			request.get(req.user.openidconnect.issuer + '/.well-known/openid-configuration', function (error, response, body, issuerInfo) {
+				var issuerInfo = JSON.parse(body);
+				return res.redirect(issuerInfo.userinfo_endpoint + '?user=' + queryUserString);
+			});
+		};
 
 };
 
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
 	if (req.isAuthenticated())
-		return next();
+	return next();
 
 	res.redirect('/proxy');
 }
 
-var callbackResponse = function(req, res) {
-    if (!req.user) {
-        return res.redirect('/proxy');
-    }
-		console.log(req.user.openidconnect);
-    console.log('User authenticated with: ' + req.user.openidconnect.issuer + ' Strategy with userid: ' + req.user.openidconnect.id);
-    var queryUserString = encodeURIComponent(JSON.stringify(req.user.openidconnect));
-    return res.redirect(ipAdress + ':8080/auth/realms/master/protocol/openid-connect/userinfo?user=' + queryUserString);
-};
