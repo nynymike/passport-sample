@@ -43,6 +43,7 @@ app.use(function (req, res, next) {
 var options = {
    key  : fs.readFileSync('server.key'),
    cert : fs.readFileSync('server.crt')
+
 };
 // The http server will listen to an appropriate port, or default to
 // port 5000.
@@ -57,52 +58,14 @@ var bodyParser   = require('body-parser');
 var configDB = require('./config/database.js');
 
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
-// Makes connection asynchronously.  Mongoose will queue up database
-// operations and release them when the connection is complete.
-// mongoose.connect(uristring, function (err, res) {
-//   if (err) {
-//   console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-//   } else {
-//   console.log ('Succeeded connected to: ' + uristring);
-//   }
-// });
+mongoose.connect(configDB.url, function (err, res) {
+    if (err) {
+    console.log ('ERROR connecting to: ' + configDB.url + '. ' + err);
+    } else {
+    console.log ('Succeeded connected to: ' + configDB.url);
+    }
+}); // connect to our database
 
-//
-// server = http.createServer(function (req, res) {
-//   if (req.method == 'POST') {
-//         var body = '';
-//         req.on('data', function (data) {
-//             body += data;
-//         });
-//         req.on('end', function () {
-//             authParams.openidconnectAuth.issuer = body;
-//             console.log(authParams.openidconnectAuth);
-//             passport.authenticate('openidconnect', { scope : 'email' })
-//         });
-//
-//   }
-//   if (req.method == 'GET') {
-//         var body = '';
-//         req.on('data', function (data) {
-//             body += data;
-//         });
-//         req.on('end', function () {
-//             authParams.openidconnectAuth.issuer = body;
-//             console.log(authParams.openidconnectAuth);
-//             passport.authenticate('openidconnect', { scope : 'email' })
-//         });
-//     }
-//     res.setHeader("Access-Control-Allow-Origin", "*");
-//     // res.setHeader('Location', 'http://localhost:8090/auth/openidconnect');
-//     // res.statusCode = 301;
-//     res.statusCode = 200;
-//     res.end('http://localhost:8090/auth/openidconnect');
-// });
-//
-//
-// host = 'localhost';
-// server.listen(8200, host);
 
 
 require('./config/passport')(passport); // pass passport for configuration
@@ -120,10 +83,14 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport,request); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport, request); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
+
+//https
 // https.createServer(options, app).listen(port, function () {
 //   console.log('The magic happens on port ' + port);
 // });
+
+//http
 app.listen(port);

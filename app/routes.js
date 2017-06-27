@@ -7,6 +7,7 @@ var authParams = require('../config/auth');
 		res.render('index.ejs');
 	});
 
+	// authenticate the client with issuer info received
 	app.post('/proxy', function(req, res) {
 		authParams.openidconnectAuth.issuer = req.body.issuer;
 
@@ -52,26 +53,10 @@ var authParams = require('../config/auth');
 		app.get('/auth/openidconnect/callback',
 			passport.authenticate('openidconnect', {
 				successRedirect : '/profile',
-				failureRedirect : '/'
+				failureRedirect : '/proxy'
 			}));
+			// }), callbackResponse);
 
-
-
-// =============================================================================
-// AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
-// =============================================================================
-
-	// openidconnect --------------------------------
-
-		// send to openidconnect to do the authentication
-		app.get('/connect/openidconnect', passport.authorize('openidconnect', { scope : 'email' }));
-
-		// handle the callback after openidconnect has authorized the user
-		app.get('/connect/openidconnect/callback',
-			passport.authorize('openidconnect', {
-				successRedirect : '/profile',
-				failureRedirect : '/'
-			}));
 
 };
 
@@ -80,5 +65,6 @@ function isLoggedIn(req, res, next) {
 	if (req.isAuthenticated())
 		return next();
 
-	res.redirect('/');
+	res.redirect('/proxy');
 }
+

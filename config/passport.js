@@ -36,23 +36,35 @@ module.exports = function(passport) {
     // =========================================================================
     passport.use(new OpenIdConnectStrategy({
 
+        passReqToCallback : true, // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+
         // pull in our app id and secret from our auth.js file
-        clientID        : configAuth.openidconnectAuth.clientID,
-        clientSecret    : configAuth.openidconnectAuth.clientSecret,
-        callbackURL     : configAuth.openidconnectAuth.callbackURL,
+
+        // =====================================================================
+        // PASSPORT-OPENIDCONNECT===============================================
+        // =====================================================================
+        // (github.com/jaredhanson/passport-openidconnect)
+
+        // clientID        : configAuth.openidconnectAuth.clientID,
+        // clientSecret    : configAuth.openidconnectAuth.clientSecret,
+        // callbackURL     : configAuth.openidconnectAuth.callbackURL,
+        // issuer          : configAuth.openidconnectAuth.issuer,
+        // authorizationURL : configAuth.openidconnectAuth.authorizationURL,
+        // tokenURL : configAuth.openidconnectAuth.tokenURL,
+        // userInfoURL: configAuth.openidconnectAuth.userInfoURL,
+
+        // =====================================================================
+        // PASSPORT-OPENIDCONNECT===============================================
+        // =====================================================================
+        // (github.com/toledorafael/passport-openidconnect)
+        
         issuer          : configAuth.openidconnectAuth.issuer,
-        authorizationURL : configAuth.openidconnectAuth.authorizationURL,
-        tokenURL : configAuth.openidconnectAuth.tokenURL,
-        userInfoURL: configAuth.openidconnectAuth.userInfoURL,
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
     } ,
 
 
     function(req, iss, sub, profile, jwtClaims, accessToken, refreshToken, params, done) {
-      // console.log(req);
       // asynchronous
-      console.log(profile);
       process.nextTick(function() {
 
           // check if the user is already logged in
