@@ -1,6 +1,6 @@
 module.exports = function(app, passport, request) {
 var authParams = require('../config/auth');
-var ipAdress = require('../config/ip');
+var ipAddress = require('../config/ip');
 // normal routes ===============================================================
 
 	// show the home page (will also have our login links)
@@ -11,7 +11,7 @@ var ipAdress = require('../config/ip');
 	// authenticate the client with issuer info received
 	app.post('/proxy', function(req, res) {
 		authParams.openidconnectAuth.issuer = req.body.issuer;
-		request.get(ipAdress + ':8090/auth/openidconnect', function (error, response, body) {
+		request.get(ipAddress + ':8090/auth/openidconnect', function (error, response, body) {
 			res.writeHead(response.statusCode, response.headers);
 			res.write(body);
 			res.end();
