@@ -10,7 +10,7 @@ var ipAddress = require('../config/ip');
 
 	// authenticate the client with issuer info received
 	app.post('/proxy', function(req, res) {
-		authParams.openidconnectAuth.issuer = req.body.issuer;
+		asignIssuer(req.body.issuer);
 		request.get(ipAddress + ':8090/auth/openidconnect', function (error, response, body) {
 			res.writeHead(response.statusCode, response.headers);
 			res.write(body);
@@ -81,3 +81,6 @@ function isLoggedIn(req, res, next) {
 	res.redirect('/proxy');
 }
 
+function asignIssuer(issuer) {
+	authParams.openidconnectAuth.issuer = issuer;
+}
