@@ -1,7 +1,3 @@
 var ip = require('ip');
 
-module.exports = {
-
-    'ip' : ip.address()
-
-};
+module.exports = ip.address() + ':8090';
