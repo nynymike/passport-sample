@@ -1,6 +1,6 @@
 // config/passport.js
-
-// load the strategy we need we need
+var request = require('request');
+// load the strategy we need
 var OpenIdConnectStrategy = require('passport-openidconnect').Strategy;
 
 // load up the user model
@@ -66,8 +66,17 @@ module.exports = function(passport) {
 
     function(req, iss, sub, profile, jwtClaims, accessToken, refreshToken, params, done) {
       // asynchronous
+      // var options = {
+      //   url: 'http://devdomain.org:8080/auth/realms/master/protocol/openid-connect/userinfo',
+      //   headers: {
+      //     'Authorization': 'Bearer ' + accessToken
+      //   }
+      // };
+      // request.get(options, function (error, response, body) {
+			// 	var userInfo = JSON.parse(body);
+			// 	console.log(userInfo);
+			// });
       process.nextTick(function() {
-
           // check if the user is already logged in
           if (!req.user) {
 
