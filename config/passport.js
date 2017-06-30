@@ -36,7 +36,8 @@ module.exports = function(passport) {
     // =========================================================================
     passport.use(new OpenIdConnectStrategy({
 
-        passReqToCallback : true, // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        passReqToCallback : true, // allows us to pass in the req from our route
+                                  //(lets us check if a user is logged in or not)
 
         // pull in our app id and secret from our auth.js file
 
@@ -57,7 +58,7 @@ module.exports = function(passport) {
         // PASSPORT-OPENIDCONNECT===============================================
         // =====================================================================
         // (github.com/toledorafael/passport-openidconnect)
-        
+
         issuer          : configAuth.openidconnectAuth.issuer,
 
     } ,
@@ -124,7 +125,6 @@ module.exports = function(passport) {
                   return done(null, user);
             });
         }
-
     });
 
 }));
