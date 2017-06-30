@@ -20,7 +20,8 @@ module.exports = {
         // =====================================================================
         // (github.com/toledorafael/passport-openidconnect)
 
-        'issuer'          : 'http://devdomain.org:8080/auth/realms/master',
+        'issuer'          : 'http://devdomain.org:8080/auth/realms/master'
+        // 'issuer'          : 'default'
     }
 
 };
