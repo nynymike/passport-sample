@@ -1,6 +1,7 @@
-module.exports = function(app, passport, request) {
 var authParams = require('../config/auth');
 var ipAddress = require('../config/ip');
+
+module.exports = function(app, passport, request) {
 // normal routes ===============================================================
 
 	// show the home page (will also have our login links)
@@ -50,26 +51,11 @@ var ipAddress = require('../config/ip');
 		app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'}));
 
 		// handle the callback after openidconnect has authenticated the user
-		app.get('/auth/openidconnect/callback',
-			passport.authenticate('openidconnect', {
-				// successRedirect : '/profile',
+		app.get('/auth/openidconnect/callback', passport.authenticate('openidconnect', {
+				successRedirect : '/profile',
 				failureRedirect : '/proxy'
-			// }));
-		}), callbackResponse);
-
-		function callbackResponse(req, res) {
-			if (!req.user) {
-				return res.redirect('/proxy');
-			}
-			console.log(req.user.openidconnect);
-			console.log('User authenticated with: ' + req.user.openidconnect.issuer + ' Strategy with userid: ' + req.user.openidconnect.id);
-			var queryUserString = encodeURIComponent(JSON.stringify(req.user.openidconnect));
-			//dynamically discover issuer's endpoint
-			request.get(req.user.openidconnect.issuer + '/.well-known/openid-configuration', function (error, response, body, issuerInfo) {
-				var issuerInfo = JSON.parse(body);
-				return res.redirect(issuerInfo.userinfo_endpoint + '?user=' + queryUserString);
-			});
-		};
+			}));
+		// }), callbackResponse);
 
 };
 
@@ -84,3 +70,22 @@ function isLoggedIn(req, res, next) {
 function asignIssuer(issuer) {
 	authParams.openidconnectAuth.issuer = issuer;
 }
+
+function callbackResponse(req, res) {
+	if (!req.user) {
+		return res.redirect('/proxy');
+	}
+	console.log('User authenticated with: ' + req.user.openidconnect.issuer + ' Strategy with userid: ' + req.user.openidconnect.id);
+	var queryUserString = encodeURIComponent(JSON.stringify(req.user.openidconnect));
+	console.log(req.user);
+	var options = {
+		url: req.authInfo.state.userInfoURL,
+		headers: {
+			'Authorization': 'Bearer ' + req.user.openidconnect.accessToken
+		}
+	};
+	request.post(options, function (error, response, body) {
+		var userInfo = JSON.parse(body);
+		console.log(userInfo);
+	});
+};
