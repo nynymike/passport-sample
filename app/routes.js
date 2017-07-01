@@ -1,11 +1,11 @@
 var authParams = require('../config/auth');
-var ipAddress = require('../config/ip');
+var request = require('request');
 // load the strategy we need
 var OpenIdConnectStrategy = require('passport-openidconnect').Strategy;
 // load up the user model
 var User = require('../app/models/user');
 
-module.exports = function(app, passport, request) {
+module.exports = function(app, passport, request, ipAddress) {
 // normal routes ===============================================================
 
 	// show the home page (will also have our login links)
