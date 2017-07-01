@@ -1,3 +1,3 @@
 var ip = require('ip');
 
-module.exports = ip.address() + ':8090';
+module.exports = function(port) { return ip.address() + ':' + port;}
