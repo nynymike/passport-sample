@@ -10,6 +10,7 @@ module.exports = function(app, passport, request) {
 
 	// show the home page (will also have our login links)
 	app.get('/proxy', function(req, res) {
+		console.log(ipAddress);
 		res.render('index.ejs');
 	});
 
@@ -44,7 +45,9 @@ module.exports = function(app, passport, request) {
 
 		// send to openidconnect to do the authentication
 		// app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'}));
-		app.get('/auth/openidconnect', authenticate, function(){});
+		app.get('/auth/openidconnect', authenticate, function(req,res){
+			console.log(req.user);
+		});
 
 
 		function authenticate (req, res, next){
