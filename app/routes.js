@@ -43,14 +43,6 @@ module.exports = function(app, passport, request) {
 
 
 	// openidconnect --------------------------------
-		// app.use(function (req, res, done) {
-		// 	if (req.query.issuer) {
-		// 			console.log(req.query.issuer);
-		// 			done();
-		// 	} else {
-		// 			done();
-		// 	}
-		// });
 
 		// send to openidconnect to do the authentication
 		// app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'}));
@@ -60,30 +52,8 @@ module.exports = function(app, passport, request) {
 		function authenticate (req, res, next){
 
 			passport.use(new OpenIdConnectStrategy({
-
-	        passReqToCallback : true, // allows us to pass in the req from our route
-	                                  //(lets us check if a user is logged in or not)
-
-	        // pull in our app id and secret from our auth.js file
-
-	        // =====================================================================
-	        // PASSPORT-OPENIDCONNECT===============================================
-	        // =====================================================================
-	        // (github.com/jaredhanson/passport-openidconnect)
-
-	        // clientID        : configAuth.openidconnectAuth.clientID,
-	        // clientSecret    : configAuth.openidconnectAuth.clientSecret,
-	        // callbackURL     : configAuth.openidconnectAuth.callbackURL,
-	        // issuer          : configAuth.openidconnectAuth.issuer,
-	        // authorizationURL : configAuth.openidconnectAuth.authorizationURL,
-	        // tokenURL : configAuth.openidconnectAuth.tokenURL,
-	        // userInfoURL: configAuth.openidconnectAuth.userInfoURL,
-
-	        // =====================================================================
-	        // PASSPORT-OPENIDCONNECT===============================================
-	        // =====================================================================
-	        // (github.com/toledorafael/passport-openidconnect)
-
+																		// allows us to pass in the req from our route
+	        passReqToCallback : true, //(lets us check if a user is logged in or not)
 	        issuer          : req.query.issuer,
 
 	    } ,
@@ -123,7 +93,6 @@ module.exports = function(app, passport, request) {
 	                      // set all of the openidconnect information in our user model
 	                      newUser.openidconnect.id    = profile.id; // set the users openidconnect id
 	                      newUser.openidconnect.issuer = iss;
-	                      // newUser.openidconnect.email = ;
 	                      newUser.openidconnect.displayName = profile.displayName;
 	                      newUser.openidconnect.accessToken = params.access_token;
 	                      newUser.openidconnect.idToken = params.id_token;
@@ -147,7 +116,6 @@ module.exports = function(app, passport, request) {
 	              // update the current users openidconnect credentials
 	              user.openidconnect.id    = profile.id; // set the users openidconnect id
 	              user.openidconnect.issuer = iss;
-	              // user.openidconnect.email = ;
 	              user.openidconnect.displayName = profile.displayName;
 	              user.openidconnect.accessToken = params.access_token;
 	              user.openidconnect.idToken = params.id_token;
