@@ -15,8 +15,6 @@ module.exports = function(app, passport, request) {
 
 	// authenticate the client with issuer info received
 	app.post('/proxy', function(req, res) {
-		asignIssuer(req.body.issuer);
-		console.log(authParams.openidconnectAuth.issuer);
 		request.get('http://' + ipAddress + '/auth/openidconnect?issuer=' + req.body.issuer, function (error, response, body) {
 			res.writeHead(response.statusCode, response.headers);
 			res.write(body);
@@ -60,21 +58,10 @@ module.exports = function(app, passport, request) {
 
 
 	    function(req, iss, sub, profile, jwtClaims, accessToken, refreshToken, params, done) {
-	      // asynchronous
-	      // var options = {
-	      //   url: 'http://devdomain.org:8080/auth/realms/master/protocol/openid-connect/userinfo',
-	      //   headers: {
-	      //     'Authorization': 'Bearer ' + accessToken
-	      //   }
-	      // };
-	      // request.get(options, function (error, response, body) {
-				// 	var userInfo = JSON.parse(body);
-				// 	console.log(userInfo);
-				// });
 	      process.nextTick(function() {
 	          // check if the user is already logged in
 	          if (!req.user) {
-
+						//
 	              // find the user in the database based on their openidconnect id
 	              User.findOne({ 'openidconnect.id' : profile.id }, function(err, user) {
 
@@ -93,7 +80,6 @@ module.exports = function(app, passport, request) {
 	                      // set all of the openidconnect information in our user model
 	                      newUser.openidconnect.id    = profile.id; // set the users openidconnect id
 	                      newUser.openidconnect.issuer = iss;
-	                      newUser.openidconnect.displayName = profile.displayName;
 	                      newUser.openidconnect.accessToken = params.access_token;
 	                      newUser.openidconnect.idToken = params.id_token;
 
@@ -103,20 +89,16 @@ module.exports = function(app, passport, request) {
 	                              throw err;
 
 	                          // if successful, return the new user
-	                          return done(null, newUser);
+														return done(null, newUser);
 	                      });
 	                  }
-
 	              });
-
 	          } else {
 	              // user already exists and is logged in, we have to link accounts
 	              var user            = req.user; // pull the user out of the session
-
 	              // update the current users openidconnect credentials
 	              user.openidconnect.id    = profile.id; // set the users openidconnect id
 	              user.openidconnect.issuer = iss;
-	              user.openidconnect.displayName = profile.displayName;
 	              user.openidconnect.accessToken = params.access_token;
 	              user.openidconnect.idToken = params.id_token;
 
@@ -124,11 +106,11 @@ module.exports = function(app, passport, request) {
 	              user.save(function(err) {
 	                  if (err)
 	                      throw err;
-	                  return done(null, user);
-	            });
-	        }
-	    });
-		}));
+												return done(null, user);
+	            	});
+	        	}
+	    	});
+			}));
 
 			passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'})(req, res, next)
 		}
@@ -160,7 +142,6 @@ function callbackResponse(req, res) {
 	}
 	console.log('User authenticated with: ' + req.user.openidconnect.issuer + ' Strategy with userid: ' + req.user.openidconnect.id);
 	var queryUserString = encodeURIComponent(JSON.stringify(req.user.openidconnect));
-	console.log(req.user);
 	var options = {
 		url: req.authInfo.state.userInfoURL,
 		headers: {
