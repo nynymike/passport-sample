@@ -20,19 +20,13 @@
     <div class="row">
 
         <!-- OPENIDCONNECT INFORMATION -->
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="well">
                 <h3 class="text-warning"><span class="fa fa-openid"></span> OpenID Connect</h3>
 
-                <!-- check if the user has this token (is the user authenticated with this social account) -->
+                <!-- check if the user has this token (is the user authenticated ) -->
                 <% if (user.openidconnect.idToken) { %>
-                    <p>
-                        <strong>id</strong>: <%= user.openidconnect.id %><br>
-                        <strong>issuer</strong>: <%= user.openidconnect.issuer %><br>
-                        <strong>idToken</strong>: <%= user.openidconnect.idToken %>
-                    </p>
-
-                    <!-- <a href="/unlink/openidconnect" class="btn btn-warning">Unlink</a> -->
+                  <h3 class="text-success"></span> You're logged!</h3>
                 <% } %>
 
             </div>
