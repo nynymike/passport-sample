@@ -17,7 +17,7 @@ module.exports = function(app, passport, request) {
 	app.post('/proxy', function(req, res) {
 		asignIssuer(req.body.issuer);
 		console.log(authParams.openidconnectAuth.issuer);
-		request.get('http://devdomain.org:8090/auth/openidconnect', function (error, response, body) {
+		request.get('http://' + ipAddress + '/auth/openidconnect?issuer=' + req.body.issuer, function (error, response, body) {
 			res.writeHead(response.statusCode, response.headers);
 			res.write(body);
 			res.end();
