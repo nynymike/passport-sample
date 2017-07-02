@@ -9,9 +9,8 @@ var userSchema = mongoose.Schema({
     openidconnect         : {
         id           : String,
         issuer       : String,
-        email        : String,
+        userName     : String,
         displayName  : String,
-        accessToken  : String,
         idToken      : String
     },
 

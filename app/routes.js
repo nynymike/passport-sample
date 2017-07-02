@@ -83,8 +83,9 @@ module.exports = function(app, passport, request, ipAddress) {
 	                      // set all of the openidconnect information in our user model
 	                      newUser.openidconnect.id    = profile.id; // set the users openidconnect id
 	                      newUser.openidconnect.issuer = iss;
-	                      newUser.openidconnect.accessToken = params.access_token;
-	                      newUser.openidconnect.idToken = params.id_token;
+												newUser.openidconnect.userName = profile._json.preferred_username;
+												newUser.openidconnect.displayName = profile.displayName;
+												newUser.openidconnect.idToken = params.id_token;
 
 	                      // save our user to the database
 	                      newUser.save(function(err) {
@@ -102,8 +103,9 @@ module.exports = function(app, passport, request, ipAddress) {
 	              // update the current users openidconnect credentials
 	              user.openidconnect.id    = profile.id; // set the users openidconnect id
 	              user.openidconnect.issuer = iss;
-	              user.openidconnect.accessToken = params.access_token;
-	              user.openidconnect.idToken = params.id_token;
+	              user.openidconnect.userName = profile._json.preferred_username;
+								user.openidconnect.displayName = profile.displayName;
+								user.openidconnect.idToken = params.id_token;
 
 	              // save the user
 	              user.save(function(err) {
