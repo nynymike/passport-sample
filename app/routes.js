@@ -135,9 +135,6 @@ function isLoggedIn(req, res, next) {
 	res.redirect('/proxy');
 }
 
-function asignIssuer(issuer) {
-	authParams.openidconnectAuth.issuer = issuer;
-}
 
 function callbackResponse(req, res) {
 	if (!req.user) {
