@@ -13,6 +13,7 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var authParams = require('./config/auth');
 var ipAddress = require('./config/ip')(port);
+var bson = require('bson');
 
 var fs = require('fs');
 var http = require('http');
