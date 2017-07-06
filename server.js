@@ -2,6 +2,8 @@
 
 // set up ======================================================================
 // get all the tools we need
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
 var express  = require('express');
 var app      = express();
 var port     = process.env.PORT || 8090;
@@ -90,9 +92,9 @@ require('./app/routes.js')(app, passport, request, ipAddress); // load our route
 // launch ======================================================================
 
 //https
-// https.createServer(options, app).listen(port, function () {
-//   console.log('The magic happens on port ' + port);
-// });
+https.createServer(options, app).listen(port, function () {
+  console.log('The magic happens on port ' + port);
+});
 
 //http
-app.listen(port);
+// app.listen(port);
