@@ -25,7 +25,7 @@ The strategy configuration uses a modified and improved passport-openidconnect s
 
 ## passport-openidconnect
 
-The other information originally required by passport-openidconnect are discovered and assigned during execution of the code. The issuer information (authorization endpoint, token endpoint and userInfo endpoint) are discovered and the clientInfo are supposed to be saved on a JSON object in the `clientInfo.js` file. Each tuple of client information (clientID, clientSecret, callbackURL) is associated with its respective issuer URL. Then this feature considers that the proxy knows the information of all clients that it may interact with and also allows each issuer to be associated with only one client. An example of the `clientInfo.js` is presented below
+The remaining information that was originally required by passport-openidconnect is discovered and saved on this new strategy. The issuer information (authorization endpoint, token endpoint and userInfo endpoint) are discovered and the clientInfo are supposed to be saved on a JSON object in the `clientInfo.js` file. Each tuple of client information (clientID, clientSecret, callbackURL) is associated with its respective issuer URL. Then this feature considers that the proxy knows the information of all clients that it may interact with and also allows each issuer to be associated with only one client. An example of the `clientInfo.js` is presented below
 
     module.exports = {
       'http://example.issuerURL.org' : {
@@ -35,5 +35,3 @@ The other information originally required by passport-openidconnect are discover
       }
     };
 
-
-Code based on the scotch.io tutorial series: [Complete Guide to Node Authentication](https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
