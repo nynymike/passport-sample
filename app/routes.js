@@ -46,7 +46,7 @@ module.exports = function (app, passport, request, ipAddress) {
     // app.get('/auth/openidconnect', passport.authenticate('openidconnect', { scope : 'email' , response_types: 'code'}));
     app.get('/auth/openidconnect',
         authenticate,
-        passport.authenticate('openidconnect', {scope: 'email', response_types: 'code'}),
+        passport.authenticate('openidconnect', {scope: 'email'}),
         function (req, res) {
 
         });
