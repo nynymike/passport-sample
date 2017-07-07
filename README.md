@@ -1,7 +1,7 @@
 # Passport Proxy
 
 ## Description
-This node proxy app allows the authentication of OpenID Connect clients to its respective Identity Provider(IP). It receives the issuer URL that the client is supposed to be authenticated against and sets the configuration parameters for the passport strategy with client and issuer info. Once the authentication succeeds it redirects the client to its respective callback URI registered on the IP.
+This node proxy app allows the authentication of OpenID Connect clients to its respective OpenID Provider(OP). The issuer URL of the target OP is sent via parameters to passport. Once the authentication succeeds, the client redirects the browser back to the respective redirect_uri registered on the OP.
 
 ## Diagram
 
